@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ClassSync Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Attendance Dashboard</h2>
+      <p class="subtext">Live attendance for the current session</p>
+      
+      <a href="index.html" class="dashboard-link" style="display:block; margin-bottom:15px; text-align:left;">&larr; Back to Home</a>
+      
+      <ul id="list">
+        <li style="justify-content: center; color: var(--muted);">Loading...</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

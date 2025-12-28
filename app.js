@@ -18,7 +18,6 @@ const db = firebase.firestore();
 function showStatus(message, isError = false) {
   const el = document.getElementById("status");
   el.innerText = message;
-  // Change color: Red for error, Green/White for success
   el.style.color = isError ? "#ef4444" : "#10b981"; 
   console.log(message);
 }
@@ -37,6 +36,24 @@ function login() {
     .catch(error => showStatus("Login Failed: " + error.message, true));
 }
 
+function register() {
+  const emailEl = document.getElementById("email");
+  const passwordEl = document.getElementById("password");
+  const email = emailEl.value.trim();
+  const password = passwordEl.value;
+
+  if (!email || !password) return alert("Please enter email and password");
+  if (password.length < 6) return alert("Password must be at least 6 characters");
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      showStatus("Registration Successful! You are now logged in.");
+    })
+    .catch((error) => {
+      showStatus("Registration Failed: " + error.message, true);
+    });
+}
+
 // --- TEACHER FUNCTIONS ---
 function startClass() {
   const user = auth.currentUser;
@@ -45,8 +62,6 @@ function startClass() {
     return;
   }
 
-  // 1. Ask Teacher for their Device Name (e.g., "Prof-Laptop" or "My-iPhone")
-  // This is the name students will look for in the Bluetooth scan.
   const deviceName = prompt("Enter your device's Bluetooth Name (as shown in Settings):", "Teacher-Laptop");
   if (!deviceName) return;
 
@@ -57,9 +72,9 @@ function startClass() {
 
     db.collection("sessions").doc(sessionId).set({
       teacherId: user.uid,
-      deviceName: deviceName, // Save this so students know what to scan
+      deviceName: deviceName, 
       location: location,     
-      radius: 40,             // 40 meters radius
+      radius: 40,             
       startTime: new Date(),
       active: true
     }).then(() => {
@@ -101,7 +116,6 @@ async function markAttendance() {
     showStatus(`Geofence Passed. Step 2: Scanning for "${teacherDeviceName}"...`);
     
     // 2. Check Bluetooth
-    // We pass the teacher's device name fetched from the DB
     const isClose = await checkBluetooth(teacherDeviceName);
     
     if (isClose) {
@@ -119,7 +133,6 @@ function checkGeofence(sessionId, callback) {
       if (!doc.exists) return alert("Session expired or invalid");
       const session = doc.data();
 
-      // Get Student Location
       navigator.geolocation.getCurrentPosition((pos) => {
         const distance = getDistance(
           pos.coords.latitude, pos.coords.longitude,
@@ -127,8 +140,6 @@ function checkGeofence(sessionId, callback) {
         );
 
         console.log("Distance:", distance.toFixed(2) + "m");
-        
-        // Pass result AND the device name to the callback
         callback(distance <= session.radius, session.deviceName);
       }, 
       (err) => showStatus("GPS Error: " + err.message, true),
@@ -139,23 +150,15 @@ function checkGeofence(sessionId, callback) {
 async function checkBluetooth(targetName) {
   try {
     alert(`Please select "${targetName}" from the list.`);
-    
-    // Triggers the browser's native Bluetooth picker
     const device = await navigator.bluetooth.requestDevice({
       filters: [{ name: targetName }],
-      optionalServices: ['battery_service'] // Required to allow connection
+      optionalServices: ['battery_service'] 
     });
-
-    // If user selects it, we try to connect to prove proximity
     const server = await device.gatt.connect();
-    
-    // If connected, they are close!
-    device.gatt.disconnect(); // Disconnect immediately
+    device.gatt.disconnect();
     return true;
-
   } catch (error) {
     console.error(error);
-    // Usually happens if user cancels or device not found
     return false;
   }
 }
@@ -175,7 +178,7 @@ function saveAttendance(user, sessionId) {
 
 // --- MATH UTILS ---
 function getDistance(lat1, lng1, lat2, lng2) {
-  const R = 6371000; // Radius of earth in meters
+  const R = 6371000; 
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLng = (lng2 - lng1) * Math.PI / 180;
   const a = Math.sin(dLat/2) * Math.sin(dLat/2) +

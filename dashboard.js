@@ -23,21 +23,17 @@ if (!sessionId) {
   const li = document.createElement("li");
   li.textContent = "No active session found.";
   li.style.justifyContent = "center";
-  // Remove the 'present' badge style for this message
   li.style.border = "1px dashed var(--border)";
-  // Hack to remove the ::after pseudo-element content
   const style = document.createElement('style');
   style.innerHTML = `ul#list li:last-child::after { content: none; }`;
   document.head.appendChild(style);
-  
   list.appendChild(li);
 } else {
-  // Real-time listener
   db.collection("attendance")
     .where("sessionId", "==", sessionId)
     .orderBy("timestamp", "desc")
     .onSnapshot(snapshot => {
-      list.innerHTML = ""; // Clear list
+      list.innerHTML = "";
       
       if (snapshot.empty) {
         list.innerHTML = "<p style='text-align:center; color:#6b7280;'>Waiting for students...</p>";
@@ -48,7 +44,6 @@ if (!sessionId) {
         const data = doc.data();
         const li = document.createElement("li");
         
-        // Format timestamp
         const date = data.timestamp ? data.timestamp.toDate() : new Date();
         const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 

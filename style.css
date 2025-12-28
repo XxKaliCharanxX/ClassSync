@@ -94,7 +94,9 @@ button {
 button:hover { transform: translateY(-1px); filter: brightness(1.05); }
 button:active { transform: translateY(0); box-shadow: 0 6px 12px rgba(79,70,229,0.28); }
 
-/* Link styling */
+.btn-secondary { background: #111827; border-color: var(--border); color: var(--text); }
+.btn-secondary:hover { filter: brightness(1.1); }
+
 .dashboard-link {
   text-align: center;
   color: var(--muted);
@@ -115,7 +117,6 @@ button:active { transform: translateY(0); box-shadow: 0 6px 12px rgba(79,70,229,
   min-height: 20px;
 }
 
-/* Dashboard list styling */
 ul#list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
 ul#list li {
   padding: 10px 12px;
